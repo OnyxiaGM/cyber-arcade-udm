@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Fighter: Gutiérrez, Montalbán y 404 vs Zero & One</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Teko:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', monospace;
+            background-color: #0b0b12;
+            color: #fff;
+            user-select: none;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* CRT Scanline Effect */
+        .crt::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 40;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Sprite Standby / Idle Animations */
+        @keyframes idleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .idle-hero {
+            animation: idleFloat 2.2s ease-in-out infinite;
+        }
+
+        .idle-enemy {
+            animation: idleFloat 2s ease-in-out infinite;
+        }
+
+        /* Attack Animations */
+        @keyframes attackRight {
+            0% { transform: translateX(0) scale(1); }
+            40% { transform: translateX(250px) scale(1.2); }
+            60% { transform: translateX(230px) scale(1.1); }
+            100% { transform: translateX(0) scale(1); }
+        }
+
+        @keyframes attackLeft {
+            0% { transform: translateX(0) scale(1); }
+            40% { transform: translateX(-250px) scale(1.2); }
+            60% { transform: translateX(-230px) scale(1.1); }
+            100% { transform: translateX(0) scale(1); }
+        }
+
+        .attacking-hero {
+            animation: attackRight 0.6s ease-in-out !important;
+            z-index: 30;
+        }
+
+        .attacking-enemy {
+            animation: attackLeft 0.6s ease-in-out !important;
+            z-index: 30;
+        }
+
+        /* Damage shake */
+        @keyframes hitShake {
+            0%, 100% { transform: translate(0, 0); filter: brightness(1); }
+            20% { transform: translate(-12px, 8px); filter: brightness(2) drop-shadow(0 0 15px red); }
+            40% { transform: translate(12px, -8px); filter: brightness(3) drop-shadow(0 0 20px red); }
+            60% { transform: translate(-8px, -4px); filter: brightness(2) drop-shadow(0 0 15px red); }
+            80% { transform: translate(8px, 4px); filter: brightness(1.5); }
+        }
+
+        .hit-effect {
+            animation: hitShake 0.5s ease-in-out;
+        }
+
+        /* Explosion */
+        @keyframes explode {
+            0% { opacity: 1; transform: scale(1); filter: brightness(2) hue-rotate(0deg); }
+            50% { opacity: 0.8; transform: scale(1.4); filter: brightness(4) hue-rotate(90deg); }
+            100% { opacity: 0; transform: scale(0); filter: brightness(10) hue-rotate(180deg); }
+        }
+
+        .exploding {
+            animation: explode 1s forwards ease-out;
+        }
+
+        /* Arcade Buttons Styling */
+        .arcade-btn {
+            background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+            border: 3px solid #f59e0b;
+            box-shadow: 0 6px 0 #92400e, 0 10px 15px rgba(0,0,0,0.8);
+            transition: all 0.1s ease;
+        }
+
+        .arcade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #92400e, 0 12px 20px rgba(245, 158, 11, 0.4);
+            border-color: #fbbf24;
+        }
+
+        .arcade-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #92400e, 0 4px 6px rgba(0,0,0,0.8);
+        }
+
+        /* Arcade Final Action Button (Continuar) */
+        .arcade-continue-btn {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 50%, #92400e 100%);
+            border: 4px solid #fef08a;
+            box-shadow: 0 8px 0 #451a03, 0 14px 25px rgba(245, 158, 11, 0.6);
+            transition: all 0.1s ease;
+        }
+
+        .arcade-continue-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 50%, #b45309 100%);
+            box-shadow: 0 11px 0 #451a03, 0 18px 30px rgba(245, 158, 11, 0.8);
+            border-color: #ffffff;
+        }
+
+        .arcade-continue-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #451a03, 0 6px 12px rgba(0,0,0,0.8);
+        }
+
+        /* Coin Insert Animation */
+        @keyframes dropCoin {
+            0% { transform: translateY(-80px) rotate(0deg); opacity: 1; }
+            70% { transform: translateY(20px) rotate(360deg); opacity: 1; }
+            100% { transform: translateY(50px) rotate(540deg); opacity: 0; }
+        }
+
+        .coin-anim {
+            animation: dropCoin 0.8s ease-in forwards;
+        }
+
+        /* Glow Text */
+        .text-glow-yellow {
+            text-shadow: 0 0 10px #f59e0b, 0 0 20px #d97706, 0 0 30px #b45309;
+        }
+        .text-glow-red {
+            text-shadow: 0 0 10px #ef4444, 0 0 20px #dc2626, 0 0 40px #991b1b;
+        }
+        .text-glow-blue {
+            text-shadow: 0 0 8px #3b82f6, 0 0 16px #1d4ed8, 0 0 24px #1e40af;
+        }
+
+        /* Arcade Health Bar Gradient */
+        .hp-bar-inner {
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="crt">
+
+    <!-- Main Game Container Frame (Exact 1200x675) -->
+    <div id="game-frame" class="relative w-[1200px] h-[675px] bg-slate-900 rounded-xl overflow-hidden border-4 border-amber-500 shadow-2xl flex flex-col justify-between" style="background-image: url('https://i.ibb.co/PJRbKfc/Eleven-Labs-image-gpt-image-2-5-sunburst-Dame-un-fondo-p-2026-10-22-T16-06-21.png'); background-size: cover; background-position: center;">
+        
+        <!-- Dark Overlay for Background readability -->
+        <div class="absolute inset-0 bg-black/40 pointer-events-none"></div>
+
+        <!-- TOP HUD: Health Bars and Question Display -->
+        <div class="relative z-10 w-full p-3 bg-gradient-to-b from-black/90 via-black/70 to-transparent">
+            
+            <!-- VS Header & Health Bars -->
+            <div class="grid grid-cols-12 gap-2 items-center mb-2">
+                
+                <!-- TEAM PLAYER HEALTH (Left) -->
+                <div class="col-span-5">
+                    <div class="flex justify-between items-center text-xs md:text-sm font-bold text-amber-400 mb-1">
+                        <span>TEAM: MONTALBÁN / GUTIÉRREZ / 404</span>
+                        <span id="player-hp-text" class="text-white">100 HP</span>
+                    </div>
+                    <div class="w-full h-6 bg-gray-900 border-2 border-amber-400 rounded-sm p-0.5 shadow-lg">
+                        <div id="player-hp" class="hp-bar-inner h-full bg-gradient-to-r from-green-500 via-yellow-400 to-green-400 w-full rounded-xs"></div>
+                    </div>
+                </div>
+
+                <!-- KO / VS LOGO (Center) -->
+                <div class="col-span-2 text-center">
+                    <span class="text-2xl md:text-4xl font-extrabold italic text-red-600 text-glow-red tracking-wider font-['Teko'] block leading-none">VS</span>
+                    <span id="q-counter" class="text-[10px] text-amber-300 font-mono">ROUND 1/10</span>
+                </div>
+
+                <!-- ENEMY HEALTH (Right) -->
+                <div class="col-span-5 text-right">
+                    <div class="flex justify-between items-center text-xs md:text-sm font-bold text-red-400 mb-1">
+                        <span id="enemy-hp-text" class="text-white">100 HP</span>
+                        <span>ZERO & ONE</span>
+                    </div>
+                    <div class="w-full h-6 bg-gray-900 border-2 border-red-500 rounded-sm p-0.5 shadow-lg flex justify-end">
+                        <div id="enemy-hp" class="hp-bar-inner h-full bg-gradient-to-r from-red-600 via-red-500 to-orange-400 w-full rounded-xs"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION BOX (Top Center) -->
+            <div class="w-full bg-black/85 border-2 border-cyan-400/80 rounded-lg p-3 text-center shadow-xl backdrop-blur-md min-h-[90px] flex items-center justify-center">
+                <p id="question-text" class="text-base md:text-xl lg:text-2xl leading-relaxed text-cyan-100 font-sans font-bold">
+                    Cargando pregunta de ciberseguridad...
+                </p>
+            </div>
+        </div>
+
+        <!-- BATTLE STAGE (Middle Area: Sprites) -->
+        <div class="relative z-10 flex-1 flex justify-between items-end px-6 md:px-12 pb-2">
+            
+            <!-- HEROES TEAM CONTAINER (Left) -->
+            <div id="heroes-container" class="relative flex items-end space-x-[-20px]">
+                
+                <!-- Montalbán (Option A) -->
+                <div id="sprite-montalban" class="relative group cursor-pointer idle-hero transition-all" style="animation-delay: 0s;">
+                    <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-amber-500/90 text-black text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">A: MONTALBÁN</span>
+                    <img src="https://i.ibb.co/v6sM10tT/1.png" alt="Montalbán" class="h-36 md:h-48 object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+                </div>
+
+                <!-- Gutiérrez (Option B) -->
+                <div id="sprite-gutierrez" class="relative group cursor-pointer idle-hero transition-all" style="animation-delay: 0.3s;">
+                    <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-cyan-500/90 text-black text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">B: GUTIÉRREZ</span>
+                    <img src="https://i.ibb.co/20GYZr5M/2.png" alt="Gutiérrez" class="h-36 md:h-48 object-contain filter drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">
+                </div>
+
+                <!-- 404 Cat (Option C) -->
+                <div id="sprite-404" class="relative group cursor-pointer idle-hero transition-all" style="animation-delay: 0.6s;">
+                    <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-purple-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">C: 404</span>
+                    <img src="https://i.ibb.co/HDRstdkW/3.png" alt="404" class="h-32 md:h-44 object-contain filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">
+                </div>
+            </div>
+
+            <!-- HIT / SPARK EFFECT CONTAINER -->
+            <div id="hit-fx" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 transition-opacity">
+                <div class="text-5xl font-black text-yellow-300 text-glow-yellow animate-ping">💥 HIT!</div>
+            </div>
+
+            <!-- ENEMIES CONTAINER (Right: Zero & One facing left) -->
+            <div id="enemies-container" class="relative">
+                <div id="sprite-enemies" class="idle-enemy transition-all">
+                    <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-80 whitespace-nowrap">ZERO & ONE</span>
+                    <img id="img-enemies" src="https://i.ibb.co/W4ntKyKF/4.png" alt="Zero y One" class="h-44 md:h-56 object-contain filter drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]">
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM UI: 3 RESPONSE BUTTONS -->
+        <div class="relative z-20 w-full p-3 bg-gradient-to-t from-black via-black/90 to-transparent">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 max-w-5xl mx-auto">
+                
+                <!-- Option A (Montalbán) -->
+                <button onclick="submitAnswer(0)" class="arcade-btn rounded-lg p-2.5 text-left flex items-start space-x-2 group">
+                    <span class="bg-amber-500 text-black text-xs font-bold px-2 py-1 rounded border border-amber-300 group-hover:bg-yellow-300">A</span>
+                    <div class="flex-1">
+                        <span class="block text-[9px] text-amber-400 font-bold uppercase tracking-wider">Montalbán</span>
+                        <span id="opt0-text" class="text-[11px] font-sans text-gray-200 block font-medium leading-snug">Cargando...</span>
+                    </div>
+                </button>
+
+                <!-- Option B (Gutiérrez) -->
+                <button onclick="submitAnswer(1)" class="arcade-btn rounded-lg p-2.5 text-left flex items-start space-x-2 group">
+                    <span class="bg-cyan-500 text-black text-xs font-bold px-2 py-1 rounded border border-cyan-300 group-hover:bg-cyan-300">B</span>
+                    <div class="flex-1">
+                        <span class="block text-[9px] text-cyan-400 font-bold uppercase tracking-wider">Gutiérrez</span>
+                        <span id="opt1-text" class="text-[11px] font-sans text-gray-200 block font-medium leading-snug">Cargando...</span>
+                    </div>
+                </button>
+
+                <!-- Option C (404) -->
+                <button onclick="submitAnswer(2)" class="arcade-btn rounded-lg p-2.5 text-left flex items-start space-x-2 group">
+                    <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded border border-purple-300 group-hover:bg-purple-300">C</span>
+                    <div class="flex-1">
+                        <span class="block text-[9px] text-purple-400 font-bold uppercase tracking-wider">El Gato 404</span>
+                        <span id="opt2-text" class="text-[11px] font-sans text-gray-200 block font-medium leading-snug">Cargando...</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- OVERLAY: GAME OVER (Triggers strictly on Failure) -->
+        <div id="game-over-overlay" class="hidden absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-4 backdrop-blur-md">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-red-600 text-glow-red mb-6 tracking-widest animate-pulse">GAME OVER</h1>
+
+            <!-- ARCADE COIN SLOT BUTTON CONTAINER -->
+            <div class="relative flex flex-col items-center">
+                
+                <!-- Animated Falling Coin -->
+                <div id="arcade-coin" class="hidden absolute -top-12 w-8 h-8 rounded-full bg-yellow-400 border-2 border-amber-200 shadow-lg flex items-center justify-center text-amber-900 font-extrabold text-xs">
+                    $
+                </div>
+
+                <!-- Coin Slot Box -->
+                <button onclick="triggerInsertCoin()" class="group relative bg-gradient-to-b from-gray-800 to-gray-950 border-4 border-red-600 rounded-xl p-6 shadow-[0_0_30px_rgba(220,38,38,0.5)] hover:border-yellow-400 transition-all flex flex-col items-center">
+                    <div class="w-3 h-12 bg-black border-2 border-gray-600 rounded-sm mb-3 group-hover:border-yellow-400 shadow-inner relative overflow-hidden">
+                        <div class="absolute inset-x-0 top-0 h-2 bg-yellow-400/30"></div>
+                    </div>
+                    
+                    <span class="text-sm md:text-base font-bold text-yellow-400 text-glow-yellow animate-bounce">
+                        INSERT COIN
+                    </span>
+                    <span class="text-[9px] text-gray-400 font-sans mt-1">CLICK PARA VOLVER A INTENTAR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- OVERLAY: FATALITY / VICTORY -->
+        <div id="victory-overlay" class="hidden absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 backdrop-blur-lg">
+            <div class="text-center max-w-3xl mx-auto flex flex-col items-center">
+                <h1 class="text-6xl md:text-8xl font-extrabold text-yellow-400 text-glow-yellow mb-4 tracking-widest italic animate-bounce font-['Teko']">
+                    FATALITY!
+                </h1>
+                
+                <!-- Arcade 8-Bit Navy Blue Box for Final Message -->
+                <div class="bg-gradient-to-b from-[#0b1b3d] to-[#040b1e] border-4 border-blue-600 rounded-lg p-5 shadow-[0_0_30px_rgba(30,64,175,0.6)] mb-6">
+                    <p class="text-xs md:text-base lg:text-lg text-blue-300 font-['Press_Start_2P'] leading-loose tracking-wide drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                        Montalbán, Gutiérrez y 404 han derrotado a ZERO y ONE, pero no podrían haberlo hecho sin tu ayuda.
+                    </p>
+                </div>
+
+                <!-- 8-Bit Arcade Button: 'Continuar' (Navigates directly in window.top) -->
+                <button onclick="goToNextPart()" class="arcade-continue-btn cursor-pointer py-4 px-10 rounded-xl flex items-center justify-center space-x-3 group">
+                    <span class="text-white font-['Press_Start_2P'] text-sm md:text-base tracking-wider drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                        Continuar
+                    </span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 10 CYBERSECURITY QUESTIONS DATA (No question numbers) ---
+        const questions = [
+            {
+                q: "¿Cuál es el objetivo de un correo malicioso (\"phishing\")?",
+                options: [
+                    "Es un tipo de ataque que busca robar información, credenciales o dinero. El truco del ladrón disfrazado de cartero.",
+                    "¡Un virus que se te mete en el ordenador solo con abrir un correo sin tocar ningún enlace ni descargar nada!",
+                    "Proceso de captura masiva de especímenes acuáticos. BZZZZT! Error de módulo: Confusión con pesca deportiva. Miau."
+                ],
+                correct: 0 // Montalbán
+            },
+            {
+                q: "¿Cuál es una señal clara de alerta en un correo sospechoso?",
+                options: [
+                    "Cualquier correo enviado pasadas las 8 de la tarde; a esas horas solo trabajan los ciberdelincuentes.",
+                    "Que el correo no lleve imágenes de gatitos ni logotipo oficial en alta resolución.",
+                    "Análisis de cabeceras: Dominio de origen con typosquatting (banc0-oficial.net) y sentido de urgencia forzado."
+                ],
+                correct: 2 // El Gato 404
+            },
+            {
+                q: "¿Cómo suelen intentar engañar mediante una llamada telefónica?",
+                options: [
+                    "El miedo inminente y la urgencia (ej. '¡Hay un fraude en su cuenta AHORA, autorice la transferencia!').",
+                    "La educación y el aburrimiento; te leen los términos y condiciones durante tres horas hasta que cedes.",
+                    "La hipnosis acústica modulada a 432Hz. BZZZZT! Obstrucción de canal auditivo con cera. Miau."
+                ],
+                correct: 0 // Montalbán
+            },
+            {
+                q: "¿Cómo reaccionar si te piden confirmar claves por teléfono?",
+                options: [
+                    "Pasarle a Gutiérrez el teléfono diciendo 'te llama el banco' para que se coma ella el problema.",
+                    "Colgar inmediatamente, buscar por tu cuenta el teléfono oficial de la entidad y llamar tú directamente.",
+                    "Dar claves falsas y cantar La Macarena para desorientar al ciberdelincuente. BZZZZT! Miau."
+                ],
+                correct: 1 // Gutiérrez
+            },
+            {
+                q: "Una web te muestra un supuesto error que se soluciona \"copiando un texto y pulsando Win+R\". ¿Qué está pasando en realidad?",
+                options: [
+                    "Es un engaño de ingeniería social para que ejecutes tú mismo un comando dañino sin darte cuenta.",
+                    "Tu ordenador ha explotado en silencio y la web es un espíritu bondadoso intentando ayudarte. ¡Qué miedo!",
+                    "La tecla Windows te ha premiado con un sorteo rápido. BZZZZT! Me encantan los premios. Miau."
+                ],
+                correct: 0 // Montalbán
+            },
+            {
+                q: "Si una página web te engaña para que pegues y ejecutes un código desconocido en tu ordenador, ¿cuál es el mayor peligro?",
+                options: [
+                    "Que el ordenador empiece a hablar en latín y te cambie la hora a la de Tokio. ¿Qué? Yo también soy gracioso.",
+                    "Que te encripten todas las carpetas de tu ordenador y no puedas acceder a tus archivos. Qué mal.",
+                    "¡Error 404! Que se instale un programa espía en segundo plano para robar tus contraseñas, tarjetas y credenciales."
+                ],
+                correct: 2 // El Gato 404
+            },
+            {
+                q: "Recibes una videollamada urgente de tu jefe exigiendo una transferencia bancaria inmediata. ¿Cómo debes reaccionar?",
+                options: [
+                    "Sospechar siempre, por mucho que le veas la cara o escuches su voz. Cuelgas de inmediato, buscas su teléfono oficial por tu cuenta y llamas directamente para verificar la orden.",
+                    "¡Hacer la transferencia corriendo antes de que se enfade conmigo y enviarle luego un mensaje con un emoticono de fiesta!",
+                    "Transferir todo a una wallet en criptomonedas gestionada por un bot felino. BZZZZT! Fondos desviados a compra masiva de atún. Miau."
+                ],
+                correct: 0 // Montalbán
+            },
+            {
+                q: "¿Para qué sirve una 'Palabra Clave' o Safeword?",
+                options: [
+                    "Para autenticar la identidad por un canal alternativo ante una llamada de urgencia pidiendo dinero o claves.",
+                    "¡Para desbloquear el ordenador si te has olvidado la contraseña del usuario!",
+                    "Código para activar el modo fiesta en el servidor. BZZZZT! Luces LED parpadeando... Miau."
+                ],
+                correct: 0 // Montalbán
+            },
+            {
+                q: "¿En qué consiste la 'Doble Extorsión'?",
+                options: [
+                    "Además de cifrar dispositivos, exfiltran datos confidenciales y amenazan con filtrarlos si no pagas.",
+                    "¡Que te piden el doble de dinero si tardas más de diez minutos en responder al correo!",
+                    "Cobrar el rescate dos veces aplicando IVA y gastos de gestión. BZZZZT! Módulo contable corrupto. Miau."
+                ],
+                correct: 0 // Montalbán
+            },
+            {
+                q: "¿Cuál es la vía principal por la que el Ransomware consigue colarse en los sistemas de una empresa?",
+                options: [
+                    "El polvo que se acumula en las ranuras de ventilación de los servidores cuando el servicio de limpieza no pasa.",
+                    "Correos de Phishing con adjuntos/enlaces maliciosos y servicios de Escritorio Remoto (RDP) expuestos sin doble factor.",
+                    "Infiltración por roedores cibernéticos. BZZZZT! Mordedura de cable Ethernet por ratón de bola. Miau."
+                ],
+                correct: 1 // Gutiérrez
+            }
+        ];
+
+        // --- GAME STATE ---
+        let currentQ = 0;
+        let playerHP = 100;
+        let enemyHP = 100;
+        let isAnimating = false;
+
+        // --- AUDIO SYNTHESIS (Retro Sound FX) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playRetroSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'hit') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            } else if (type === 'coin') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(987.77, now); // B5
+                osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'gameover') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(40, now + 0.8);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.8);
+                osc.start(now);
+                osc.stop(now + 0.8);
+            } else if (type === 'fatality') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.setValueAtTime(554.37, now + 0.1);
+                osc.frequency.setValueAtTime(659.25, now + 0.2);
+                osc.frequency.setValueAtTime(880, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.7);
+                osc.start(now);
+                osc.stop(now + 0.7);
+            }
+        }
+
+        // --- DOM ELEMENTS ---
+        const questionText = document.getElementById('question-text');
+        const opt0Text = document.getElementById('opt0-text');
+        const opt1Text = document.getElementById('opt1-text');
+        const opt2Text = document.getElementById('opt2-text');
+        const qCounter = document.getElementById('q-counter');
+        
+        const playerHpBar = document.getElementById('player-hp');
+        const enemyHpBar = document.getElementById('enemy-hp');
+        const playerHpText = document.getElementById('player-hp-text');
+        const enemyHpText = document.getElementById('enemy-hp-text');
+
+        const gameOverOverlay = document.getElementById('game-over-overlay');
+        const victoryOverlay = document.getElementById('victory-overlay');
+        const arcadeCoin = document.getElementById('arcade-coin');
+        const hitFx = document.getElementById('hit-fx');
+
+        const heroSprites = [
+            document.getElementById('sprite-montalban'),
+            document.getElementById('sprite-gutierrez'),
+            document.getElementById('sprite-404')
+        ];
+        const enemySprite = document.getElementById('sprite-enemies');
+
+        // --- LOAD QUESTION ---
+        function loadQuestion() {
+            if (currentQ >= questions.length) {
+                triggerVictory();
+                return;
+            }
+
+            const data = questions[currentQ];
+            qCounter.textContent = `ROUND ${currentQ + 1}/10`;
+            questionText.textContent = data.q;
+            opt0Text.textContent = data.options[0];
+            opt1Text.textContent = data.options[1];
+            opt2Text.textContent = data.options[2];
+        }
+
+        // --- ANSWER SUBMISSION ---
+        function submitAnswer(selectedIndex) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            const currentData = questions[currentQ];
+
+            if (selectedIndex === currentData.correct) {
+                // CORRECT ANSWER: Corresponding Hero Attacks Zero & One
+                const attacker = heroSprites[selectedIndex];
+                attacker.classList.add('attacking-hero');
+
+                playRetroSound('hit');
+
+                setTimeout(() => {
+                    // Hit Effect & Enemy Damage
+                    enemySprite.classList.add('hit-effect');
+                    showHitFx();
+                    
+                    enemyHP = Math.max(0, enemyHP - 10);
+                    updateHealthBars();
+
+                    setTimeout(() => {
+                        attacker.classList.remove('attacking-hero');
+                        enemySprite.classList.remove('hit-effect');
+                        
+                        currentQ++;
+                        isAnimating = false;
+
+                        if (enemyHP <= 0 || currentQ >= questions.length) {
+                            triggerVictory();
+                        } else {
+                            loadQuestion();
+                        }
+                    }, 500);
+
+                }, 300);
+
+            } else {
+                // INCORRECT ANSWER: Zero & One Attacks -> INSTAKILL
+                enemySprite.classList.add('attacking-enemy');
+                playRetroSound('hit');
+
+                setTimeout(() => {
+                    // Hit Player Team
+                    heroSprites.forEach(sprite => sprite.classList.add('hit-effect'));
+                    showHitFx();
+
+                    playerHP = 0;
+                    updateHealthBars();
+
+                    setTimeout(() => {
+                        enemySprite.classList.remove('attacking-enemy');
+                        heroSprites.forEach(sprite => sprite.classList.remove('hit-effect'));
+                        
+                        playRetroSound('gameover');
+                        gameOverOverlay.classList.remove('hidden');
+                        isAnimating = false;
+                    }, 500);
+
+                }, 300);
+            }
+        }
+
+        // --- UPDATE HEALTH BARS ---
+        function updateHealthBars() {
+            playerHpBar.style.width = `${playerHP}%`;
+            enemyHpBar.style.width = `${enemyHP}%`;
+
+            playerHpText.textContent = `${playerHP} HP`;
+            enemyHpText.textContent = `${enemyHP} HP`;
+
+            if (playerHP < 30) {
+                playerHpBar.classList.remove('from-green-500', 'via-yellow-400');
+                playerHpBar.classList.add('from-red-600', 'to-red-500');
+            } else {
+                playerHpBar.classList.add('from-green-500', 'via-yellow-400');
+                playerHpBar.classList.remove('from-red-600', 'to-red-500');
+            }
+        }
+
+        // --- HIT FX ---
+        function showHitFx() {
+            hitFx.style.opacity = '1';
+            setTimeout(() => { hitFx.style.opacity = '0'; }, 300);
+        }
+
+        // --- INSERT COIN (RETRY LOGIC) ---
+        function triggerInsertCoin() {
+            playRetroSound('coin');
+            
+            arcadeCoin.classList.remove('hidden');
+            arcadeCoin.classList.add('coin-anim');
+
+            setTimeout(() => {
+                playerHP = 100;
+                enemyHP = 100;
+                currentQ = 0;
+                
+                updateHealthBars();
+                loadQuestion();
+
+                arcadeCoin.classList.add('hidden');
+                arcadeCoin.classList.remove('coin-anim');
+                gameOverOverlay.classList.add('hidden');
+            }, 800);
+        }
+
+        // --- VICTORY STATE ---
+        function triggerVictory() {
+            playRetroSound('fatality');
+            
+            // Explode Enemy Sprite
+            enemySprite.classList.add('exploding');
+
+            setTimeout(() => {
+                victoryOverlay.classList.remove('hidden');
+            }, 1000);
+        }
+
+        // --- REDIRECTION TO SECOND GENIALLY PART ---
+        function goToNextPart() {
+            playRetroSound('coin');
+            const targetUrl = 'https://view.genially.com/6ade550c799b7099659a25c0';
+            
+            // Navigate directly in the top window on the same site/tab
+            setTimeout(() => {
+                try {
+                    window.top.location.href = targetUrl;
+                } catch (e) {
+                    window.location.href = targetUrl;
+                }
+            }, 250);
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
