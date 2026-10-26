@@ -177,11 +177,11 @@
             <!-- VS Header & Health Bars -->
             <div class="grid grid-cols-12 gap-2 items-center mb-2">
                 
-                <!-- TEAM PLAYER HEALTH (Left) -->
+                <!-- PLAYER HEALTH (Left - Single Line) -->
                 <div class="col-span-5">
-                    <div class="flex justify-between items-center text-xs md:text-sm font-bold text-amber-400 mb-1">
-                        <span>TEAM: MONTALBÁN / GUTIÉRREZ / 404</span>
-                        <span id="player-hp-text" class="text-white">100 HP</span>
+                    <div class="flex justify-between items-center text-xs md:text-sm font-bold text-amber-400 mb-1 whitespace-nowrap">
+                        <span class="truncate mr-2">EQUIPO UDM</span>
+                        <span id="player-hp-text" class="text-white">150 HP</span>
                     </div>
                     <div class="w-full h-6 bg-gray-900 border-2 border-amber-400 rounded-sm p-0.5 shadow-lg">
                         <div id="player-hp" class="hp-bar-inner h-full bg-gradient-to-r from-green-500 via-yellow-400 to-green-400 w-full rounded-xs"></div>
@@ -207,15 +207,15 @@
             </div>
 
             <!-- QUESTION BOX (Top Center) -->
-            <div class="w-full bg-black/85 border-2 border-cyan-400/80 rounded-lg p-3 text-center shadow-xl backdrop-blur-md min-h-[90px] flex items-center justify-center">
-                <p id="question-text" class="text-base md:text-xl lg:text-2xl leading-relaxed text-cyan-100 font-sans font-bold">
+            <div class="w-full bg-black/85 border-2 border-cyan-400/80 rounded-lg p-3 text-center shadow-xl backdrop-blur-md min-h-[85px] flex items-center justify-center">
+                <p id="question-text" class="text-base md:text-lg lg:text-xl leading-relaxed text-cyan-100 font-sans font-bold">
                     Cargando pregunta de ciberseguridad...
                 </p>
             </div>
         </div>
 
-        <!-- BATTLE STAGE (Middle Area: Sprites) -->
-        <div class="relative z-10 flex-1 flex justify-between items-end px-6 md:px-12 pb-2">
+        <!-- BATTLE STAGE (Middle Area: Sprites desplazados ligeramente hacia arriba) -->
+        <div class="relative z-10 flex-1 flex justify-between items-end px-6 md:px-12 pb-8">
             
             <!-- HEROES TEAM CONTAINER (Left) -->
             <div id="heroes-container" class="relative flex items-end space-x-[-20px]">
@@ -223,19 +223,19 @@
                 <!-- Montalbán (Option A) -->
                 <div id="sprite-montalban" class="relative group cursor-pointer idle-hero transition-all" style="animation-delay: 0s;">
                     <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-amber-500/90 text-black text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">A: MONTALBÁN</span>
-                    <img src="https://i.ibb.co/v6sM10tT/1.png" alt="Montalbán" class="h-36 md:h-48 object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+                    <img src="https://i.ibb.co/v6sM10tT/1.png" alt="Montalbán" class="h-32 md:h-44 object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" onerror="this.src='https://placehold.co/120x160/f59e0b/000?text=Montalban'">
                 </div>
 
                 <!-- Gutiérrez (Option B) -->
                 <div id="sprite-gutierrez" class="relative group cursor-pointer idle-hero transition-all" style="animation-delay: 0.3s;">
                     <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-cyan-500/90 text-black text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">B: GUTIÉRREZ</span>
-                    <img src="https://i.ibb.co/20GYZr5M/2.png" alt="Gutiérrez" class="h-36 md:h-48 object-contain filter drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">
+                    <img src="https://i.ibb.co/20GYZr5M/2.png" alt="Gutiérrez" class="h-32 md:h-44 object-contain filter drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]" onerror="this.src='https://placehold.co/120x160/06b6d4/000?text=Gutierrez'">
                 </div>
 
                 <!-- 404 Cat (Option C) -->
                 <div id="sprite-404" class="relative group cursor-pointer idle-hero transition-all" style="animation-delay: 0.6s;">
-                    <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-purple-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">C: 404</span>
-                    <img src="https://i.ibb.co/HDRstdkW/3.png" alt="404" class="h-32 md:h-44 object-contain filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">
+                    <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-purple-500/90 text-black text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">C: 404</span>
+                    <img src="https://i.ibb.co/HDRstdkW/3.png" alt="404" class="h-28 md:h-40 object-contain filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" onerror="this.src='https://placehold.co/100x140/a855f7/000?text=404'">
                 </div>
             </div>
 
@@ -247,46 +247,45 @@
             <!-- ENEMIES CONTAINER (Right: Zero & One facing left) -->
             <div id="enemies-container" class="relative">
                 <div id="sprite-enemies" class="idle-enemy transition-all">
-                    <span class="absolute -top-7 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-80 whitespace-nowrap">ZERO & ONE</span>
-                    <img id="img-enemies" src="https://i.ibb.co/W4ntKyKF/4.png" alt="Zero y One" class="h-44 md:h-56 object-contain filter drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]">
+                    <img id="img-enemies" src="https://i.ibb.co/W4ntKyKF/4.png" alt="Zero y One" class="h-40 md:h-52 object-contain filter drop-shadow-[0_0_10px_rgba(239,68,68,0.6)]" onerror="this.src='https://placehold.co/150x200/ef4444/fff?text=ZeroOne'">
                 </div>
             </div>
         </div>
 
         <!-- BOTTOM UI: 3 RESPONSE BUTTONS -->
         <div class="relative z-20 w-full p-3 bg-gradient-to-t from-black via-black/90 to-transparent">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-5xl mx-auto">
                 
                 <!-- Option A (Montalbán) -->
-                <button onclick="submitAnswer(0)" class="arcade-btn rounded-lg p-2.5 text-left flex items-start space-x-2 group">
-                    <span class="bg-amber-500 text-black text-xs font-bold px-2 py-1 rounded border border-amber-300 group-hover:bg-yellow-300">A</span>
+                <button onclick="submitAnswer(0)" class="arcade-btn rounded-lg p-3 text-left flex items-start space-x-2.5 group">
+                    <span class="bg-amber-500 text-black text-xs font-bold px-2.5 py-1.5 rounded border border-amber-300 group-hover:bg-yellow-300">A</span>
                     <div class="flex-1">
-                        <span class="block text-[9px] text-amber-400 font-bold uppercase tracking-wider">Montalbán</span>
-                        <span id="opt0-text" class="text-[11px] font-sans text-gray-200 block font-medium leading-snug">Cargando...</span>
+                        <span class="block text-[10px] text-amber-400 font-bold uppercase tracking-wider mb-0.5">Montalbán</span>
+                        <span id="opt0-text" class="text-xs md:text-sm font-sans text-gray-100 block font-medium leading-snug">Cargando...</span>
                     </div>
                 </button>
 
                 <!-- Option B (Gutiérrez) -->
-                <button onclick="submitAnswer(1)" class="arcade-btn rounded-lg p-2.5 text-left flex items-start space-x-2 group">
-                    <span class="bg-cyan-500 text-black text-xs font-bold px-2 py-1 rounded border border-cyan-300 group-hover:bg-cyan-300">B</span>
+                <button onclick="submitAnswer(1)" class="arcade-btn rounded-lg p-3 text-left flex items-start space-x-2.5 group">
+                    <span class="bg-cyan-500 text-black text-xs font-bold px-2.5 py-1.5 rounded border border-cyan-300 group-hover:bg-cyan-300">B</span>
                     <div class="flex-1">
-                        <span class="block text-[9px] text-cyan-400 font-bold uppercase tracking-wider">Gutiérrez</span>
-                        <span id="opt1-text" class="text-[11px] font-sans text-gray-200 block font-medium leading-snug">Cargando...</span>
+                        <span class="block text-[10px] text-cyan-400 font-bold uppercase tracking-wider mb-0.5">Gutiérrez</span>
+                        <span id="opt1-text" class="text-xs md:text-sm font-sans text-gray-100 block font-medium leading-snug">Cargando...</span>
                     </div>
                 </button>
 
                 <!-- Option C (404) -->
-                <button onclick="submitAnswer(2)" class="arcade-btn rounded-lg p-2.5 text-left flex items-start space-x-2 group">
-                    <span class="bg-purple-500 text-white text-xs font-bold px-2 py-1 rounded border border-purple-300 group-hover:bg-purple-300">C</span>
+                <button onclick="submitAnswer(2)" class="arcade-btn rounded-lg p-3 text-left flex items-start space-x-2.5 group">
+                    <span class="bg-purple-500 text-black text-xs font-bold px-2.5 py-1.5 rounded border border-purple-300 group-hover:bg-purple-300">C</span>
                     <div class="flex-1">
-                        <span class="block text-[9px] text-purple-400 font-bold uppercase tracking-wider">El Gato 404</span>
-                        <span id="opt2-text" class="text-[11px] font-sans text-gray-200 block font-medium leading-snug">Cargando...</span>
+                        <span class="block text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-0.5">404</span>
+                        <span id="opt2-text" class="text-xs md:text-sm font-sans text-gray-100 block font-medium leading-snug">Cargando...</span>
                     </div>
                 </button>
             </div>
         </div>
 
-        <!-- OVERLAY: GAME OVER (Triggers strictly on Failure) -->
+        <!-- OVERLAY: GAME OVER -->
         <div id="game-over-overlay" class="hidden absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-4 backdrop-blur-md">
             <h1 class="text-4xl md:text-6xl font-extrabold text-red-600 text-glow-red mb-6 tracking-widest animate-pulse">GAME OVER</h1>
 
@@ -326,7 +325,7 @@
                     </p>
                 </div>
 
-                <!-- 8-Bit Arcade Button: 'Continuar' (Navigates directly in window.top) -->
+                <!-- 8-Bit Arcade Button: 'Continuar' -->
                 <button onclick="goToNextPart()" class="arcade-continue-btn cursor-pointer py-4 px-10 rounded-xl flex items-center justify-center space-x-3 group">
                     <span class="text-white font-['Press_Start_2P'] text-sm md:text-base tracking-wider drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">
                         Continuar
@@ -338,7 +337,7 @@
     </div>
 
     <script>
-        // --- 10 CYBERSECURITY QUESTIONS DATA (No question numbers) ---
+        // --- 10 CYBERSECURITY QUESTIONS DATA ---
         const questions = [
             {
                 q: "¿Cuál es el objetivo de un correo malicioso (\"phishing\")?",
@@ -347,16 +346,16 @@
                     "¡Un virus que se te mete en el ordenador solo con abrir un correo sin tocar ningún enlace ni descargar nada!",
                     "Proceso de captura masiva de especímenes acuáticos. BZZZZT! Error de módulo: Confusión con pesca deportiva. Miau."
                 ],
-                correct: 0 // Montalbán
+                correct: 0
             },
             {
                 q: "¿Cuál es una señal clara de alerta en un correo sospechoso?",
                 options: [
                     "Cualquier correo enviado pasadas las 8 de la tarde; a esas horas solo trabajan los ciberdelincuentes.",
                     "Que el correo no lleve imágenes de gatitos ni logotipo oficial en alta resolución.",
-                    "Análisis de cabeceras: Dominio de origen con typosquatting (banc0-oficial.net) y sentido de urgencia forzado."
+                    "Dominios escritos con variaciones de números y letras parecidos a los legítimos (banc0-oficial.co) y urgencia en los mensajes."
                 ],
-                correct: 2 // El Gato 404
+                correct: 2
             },
             {
                 q: "¿Cómo suelen intentar engañar mediante una llamada telefónica?",
@@ -365,7 +364,7 @@
                     "La educación y el aburrimiento; te leen los términos y condiciones durante tres horas hasta que cedes.",
                     "La hipnosis acústica modulada a 432Hz. BZZZZT! Obstrucción de canal auditivo con cera. Miau."
                 ],
-                correct: 0 // Montalbán
+                correct: 0
             },
             {
                 q: "¿Cómo reaccionar si te piden confirmar claves por teléfono?",
@@ -374,7 +373,7 @@
                     "Colgar inmediatamente, buscar por tu cuenta el teléfono oficial de la entidad y llamar tú directamente.",
                     "Dar claves falsas y cantar La Macarena para desorientar al ciberdelincuente. BZZZZT! Miau."
                 ],
-                correct: 1 // Gutiérrez
+                correct: 1
             },
             {
                 q: "Una web te muestra un supuesto error que se soluciona \"copiando un texto y pulsando Win+R\". ¿Qué está pasando en realidad?",
@@ -383,7 +382,7 @@
                     "Tu ordenador ha explotado en silencio y la web es un espíritu bondadoso intentando ayudarte. ¡Qué miedo!",
                     "La tecla Windows te ha premiado con un sorteo rápido. BZZZZT! Me encantan los premios. Miau."
                 ],
-                correct: 0 // Montalbán
+                correct: 0
             },
             {
                 q: "Si una página web te engaña para que pegues y ejecutes un código desconocido en tu ordenador, ¿cuál es el mayor peligro?",
@@ -392,7 +391,7 @@
                     "Que te encripten todas las carpetas de tu ordenador y no puedas acceder a tus archivos. Qué mal.",
                     "¡Error 404! Que se instale un programa espía en segundo plano para robar tus contraseñas, tarjetas y credenciales."
                 ],
-                correct: 2 // El Gato 404
+                correct: 2
             },
             {
                 q: "Recibes una videollamada urgente de tu jefe exigiendo una transferencia bancaria inmediata. ¿Cómo debes reaccionar?",
@@ -401,25 +400,25 @@
                     "¡Hacer la transferencia corriendo antes de que se enfade conmigo y enviarle luego un mensaje con un emoticono de fiesta!",
                     "Transferir todo a una wallet en criptomonedas gestionada por un bot felino. BZZZZT! Fondos desviados a compra masiva de atún. Miau."
                 ],
-                correct: 0 // Montalbán
+                correct: 0
             },
             {
                 q: "¿Para qué sirve una 'Palabra Clave' o Safeword?",
                 options: [
-                    "Para autenticar la identidad por un canal alternativo ante una llamada de urgencia pidiendo dinero o claves.",
-                    "¡Para desbloquear el ordenador si te has olvidado la contraseña del usuario!",
-                    "Código para activar el modo fiesta en el servidor. BZZZZT! Luces LED parpadeando... Miau."
+                    "Para desbloquear el ordenador si te has olvidado la contraseña del usuario, por supuesto.",
+                    "Es un código para activar el modo fiesta en mi Alexa. Se activan todas las luces y empieza la música, ¡es la caña!",
+                    "Sirve de autenticación de identidad por un canal alternativo ante una llamada de urgencia pidiendo dinero o claves. Miau."
                 ],
-                correct: 0 // Montalbán
+                correct: 2
             },
             {
                 q: "¿En qué consiste la 'Doble Extorsión'?",
                 options: [
                     "Además de cifrar dispositivos, exfiltran datos confidenciales y amenazan con filtrarlos si no pagas.",
                     "¡Que te piden el doble de dinero si tardas más de diez minutos en responder al correo!",
-                    "Cobrar el rescate dos veces aplicando IVA y gastos de gestión. BZZZZT! Módulo contable corrupto. Miau."
+                    "Cobrar el rescate deux veces aplicando IVA y gastos de gestión. BZZZZT! Módulo contable corrupto. Miau."
                 ],
-                correct: 0 // Montalbán
+                correct: 0
             },
             {
                 q: "¿Cuál es la vía principal por la que el Ransomware consigue colarse en los sistemas de una empresa?",
@@ -428,13 +427,13 @@
                     "Correos de Phishing con adjuntos/enlaces maliciosos y servicios de Escritorio Remoto (RDP) expuestos sin doble factor.",
                     "Infiltración por roedores cibernéticos. BZZZZT! Mordedura de cable Ethernet por ratón de bola. Miau."
                 ],
-                correct: 1 // Gutiérrez
+                correct: 1
             }
         ];
 
         // --- GAME STATE ---
         let currentQ = 0;
-        let playerHP = 100;
+        let playerHP = 150;
         let enemyHP = 100;
         let isAnimating = false;
 
@@ -462,8 +461,8 @@
                 osc.stop(now + 0.2);
             } else if (type === 'coin') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(987.77, now); // B5
-                osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                osc.frequency.setValueAtTime(987.77, now);
+                osc.frequency.setValueAtTime(1318.51, now + 0.08);
                 gain.gain.setValueAtTime(0.25, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
                 osc.start(now);
@@ -536,14 +535,12 @@
             const currentData = questions[currentQ];
 
             if (selectedIndex === currentData.correct) {
-                // CORRECT ANSWER: Corresponding Hero Attacks Zero & One
                 const attacker = heroSprites[selectedIndex];
                 attacker.classList.add('attacking-hero');
 
                 playRetroSound('hit');
 
                 setTimeout(() => {
-                    // Hit Effect & Enemy Damage
                     enemySprite.classList.add('hit-effect');
                     showHitFx();
                     
@@ -567,24 +564,24 @@
                 }, 300);
 
             } else {
-                // INCORRECT ANSWER: Zero & One Attacks -> INSTAKILL
                 enemySprite.classList.add('attacking-enemy');
                 playRetroSound('hit');
 
                 setTimeout(() => {
-                    // Hit Player Team
                     heroSprites.forEach(sprite => sprite.classList.add('hit-effect'));
                     showHitFx();
 
-                    playerHP = 0;
+                    playerHP = Math.max(0, playerHP - 50);
                     updateHealthBars();
 
                     setTimeout(() => {
                         enemySprite.classList.remove('attacking-enemy');
                         heroSprites.forEach(sprite => sprite.classList.remove('hit-effect'));
                         
-                        playRetroSound('gameover');
-                        gameOverOverlay.classList.remove('hidden');
+                        if (playerHP <= 0) {
+                            playRetroSound('gameover');
+                            gameOverOverlay.classList.remove('hidden');
+                        }
                         isAnimating = false;
                     }, 500);
 
@@ -594,13 +591,14 @@
 
         // --- UPDATE HEALTH BARS ---
         function updateHealthBars() {
-            playerHpBar.style.width = `${playerHP}%`;
+            const playerPercent = (playerHP / 150) * 100;
+            playerHpBar.style.width = `${playerPercent}%`;
             enemyHpBar.style.width = `${enemyHP}%`;
 
             playerHpText.textContent = `${playerHP} HP`;
             enemyHpText.textContent = `${enemyHP} HP`;
 
-            if (playerHP < 30) {
+            if (playerHP <= 50) {
                 playerHpBar.classList.remove('from-green-500', 'via-yellow-400');
                 playerHpBar.classList.add('from-red-600', 'to-red-500');
             } else {
@@ -623,7 +621,7 @@
             arcadeCoin.classList.add('coin-anim');
 
             setTimeout(() => {
-                playerHP = 100;
+                playerHP = 150;
                 enemyHP = 100;
                 currentQ = 0;
                 
@@ -639,8 +637,6 @@
         // --- VICTORY STATE ---
         function triggerVictory() {
             playRetroSound('fatality');
-            
-            // Explode Enemy Sprite
             enemySprite.classList.add('exploding');
 
             setTimeout(() => {
@@ -653,7 +649,6 @@
             playRetroSound('coin');
             const targetUrl = 'https://view.genially.com/6ade550c799b7099659a25c0';
             
-            // Navigate directly in the top window on the same site/tab
             setTimeout(() => {
                 try {
                     window.top.location.href = targetUrl;
@@ -665,6 +660,7 @@
 
         // --- INITIALIZATION ---
         window.onload = function() {
+            updateHealthBars();
             loadQuestion();
         };
     </script>
